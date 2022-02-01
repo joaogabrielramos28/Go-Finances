@@ -16,7 +16,7 @@ interface CategoryProps {
   icon: string;
 }
 
-interface DataProps {
+export interface TransactionCardProps {
   type: "positive" | "negative";
   title: string;
   amount: string;
@@ -24,11 +24,11 @@ interface DataProps {
   date: string;
 }
 
-interface TransactionCardProps {
-  data: DataProps;
+interface Props {
+  data: TransactionCardProps;
 }
 
-export function TransactionCard({ data }: TransactionCardProps) {
+export function TransactionCard({ data }: Props) {
   return (
     <Container>
       <Title>{data.title}</Title>
