@@ -25,7 +25,6 @@ interface Props {
 
 export function TransactionCard({ data }: Props) {
   const category = categories.find((item) => item.key === data.category);
-  console.log(data?.type);
 
   return (
     <Container>
