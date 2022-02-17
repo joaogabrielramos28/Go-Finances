@@ -15,7 +15,7 @@ import { RFValue } from "react-native-responsive-fontsize";
 import { SignInSocialButton } from "../../components/SignInSocialButton";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "styled-components";
-import { ActivityIndicator, Alert } from "react-native";
+import { ActivityIndicator, Alert, Platform } from "react-native";
 
 export function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
@@ -67,11 +67,13 @@ export function SignIn() {
             svg={GoogleSvg}
             onPress={handleLoginSignInWithGoogle}
           />
-          <SignInSocialButton
-            title="Entrar com Apple"
-            svg={AppleSvg}
-            onPress={handleLoginSignInWithApple}
-          />
+          {Platform.OS === "ios" && (
+            <SignInSocialButton
+              title="Entrar com Apple"
+              svg={AppleSvg}
+              onPress={handleLoginSignInWithApple}
+            />
+          )}
         </FooterWrapper>
         {isLoading && (
           <ActivityIndicator
