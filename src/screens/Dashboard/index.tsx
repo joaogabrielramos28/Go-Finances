@@ -120,7 +120,10 @@ export function Dashboard() {
       "negative"
     );
 
-    const totalInterval = `01 á ${lastTransactionsExpensives}`;
+    const totalInterval =
+      lastTransactionsExpensives === 0
+        ? "Não há transações"
+        : `01 á ${lastTransactionsExpensives}`;
     const total = entriesTotal - expensiveTotal;
     setHighlightData({
       entries: {
@@ -129,14 +132,20 @@ export function Dashboard() {
           currency: "BRL",
         }),
 
-        lastTransaction: `Última entrada dia ${lastTransactionsEntries}`,
+        lastTransaction:
+          lastTransactionsEntries === 0
+            ? "Não há transações"
+            : `Última entrada dia ${lastTransactionsEntries}`,
       },
       expensives: {
         amount: expensiveTotal.toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
         }),
-        lastTransaction: `última saída dia ${lastTransactionsExpensives}`,
+        lastTransaction:
+          lastTransactionsExpensives === 0
+            ? "Não há transações"
+            : `última saída dia ${lastTransactionsExpensives}`,
       },
       total: {
         amount: total.toLocaleString("pt-BR", {
