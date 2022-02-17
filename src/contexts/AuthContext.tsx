@@ -25,6 +25,8 @@ interface IAuthContextData {
   user: User;
   signInWithGoogle: () => Promise<void>;
   signInWithApple: () => Promise<void>;
+  signOut: () => Promise<void>;
+  userStorageLoading: boolean;
 }
 
 interface AuthorizationResponse {
@@ -79,11 +81,13 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       });
 
       if (credential) {
+        const name = credential.fullName!.givenName!;
+        const photo = `https://ui-avatars.com/api/?name=${name}&length=1`;
         const userLogged = {
           id: String(credential.user),
           email: credential.email!,
-          name: credential.fullName!.givenName!,
-          photo: undefined,
+          name,
+          photo,
         };
 
         setUser(userLogged);
@@ -95,6 +99,12 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     } catch (error: any) {
       throw new Error(error);
     }
+  }
+
+  async function signOut() {
+    setUser({} as User);
+
+    await AsyncStorage.removeItem("@gofinances:user");
   }
 
   useEffect(() => {
@@ -112,7 +122,15 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, signInWithGoogle, signInWithApple }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        signInWithGoogle,
+        signInWithApple,
+        signOut,
+        userStorageLoading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

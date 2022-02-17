@@ -9,7 +9,7 @@ import theme from "./src/global/styles/theme";
 import { Routes } from "./src/routes/";
 
 import { SignIn } from "./src/screens/SignIn";
-import { AuthProvider } from "./src/contexts/AuthContext";
+import { AuthProvider, useAuth } from "./src/contexts/AuthContext";
 import {
   useFonts,
   Poppins_400Regular,
@@ -23,7 +23,9 @@ export default function App() {
     Poppins_500Medium,
     Poppins_700Bold,
   });
-  if (!fontsLoaded) {
+
+  const { userStorageLoading } = useAuth();
+  if (!fontsLoaded || userStorageLoading) {
     return <AppLoading />;
   }
   return (
