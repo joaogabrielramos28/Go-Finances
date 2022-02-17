@@ -47,22 +47,28 @@ export function Dashboard() {
     {} as highlightData
   );
   const theme = useTheme();
-
   function getLastTransactionDate(
     collection: DataListProps[],
     type: "positive" | "negative"
   ) {
-    const lasTransactions = Math.max.apply(
-      Math,
-      collection
-        .filter((transaction) => transaction.type === type)
-        .map((transaction) => new Date(transaction.date).getTime())
+    const collectionFiltered = collection.filter(
+      (transaction) => transaction.type === type
     );
-
-    return Intl.DateTimeFormat("pt-BR", {
-      day: "2-digit",
-      month: "long",
-    }).format(new Date(lasTransactions));
+    if (collectionFiltered.length == 0) return 0;
+    const lastTransaction = new Date(
+      Math.max.apply(
+        Math,
+        collectionFiltered.map((transaction) =>
+          new Date(transaction.date).getTime()
+        )
+      )
+    );
+    return `${lastTransaction.getDate()} de ${lastTransaction.toLocaleString(
+      "pt-BR",
+      {
+        month: "long",
+      }
+    )}`;
   }
   async function loadTransactions() {
     let entriesTotal = 0;
