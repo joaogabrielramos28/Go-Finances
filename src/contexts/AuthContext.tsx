@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import * as AuthSession from "expo-auth-session";
+import * as Google from "expo-google-app-auth";
 import * as AppleAuthentication from "expo-apple-authentication";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const { CLIENT_ID } = process.env;
@@ -44,27 +45,28 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
   async function signInWithGoogle() {
     try {
-      const RESPONSE_TYPE = "token";
-      const SCOPE = encodeURI("profile email");
+      const result = await Google.logInAsync({
+        androidClientId:
+          "467423035460-eevp8d3ddmcrqhl54s9e9egmq0fud2qi.apps.googleusercontent.com",
+        iosClientId:
+          "467423035460-h4s5r70i3ik6gth595bo42vc2m8nsajb.apps.googleusercontent.com",
+        scopes: ["profile", "email"],
+      });
 
-      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`;
+      console.log(result);
 
-      const { type, params } = (await AuthSession.startAsync({
-        authUrl,
-      })) as AuthorizationResponse;
-
-      if (type === "success") {
-        const response = await fetch(
-          `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${params.access_token}`
+      if (result.type === "success") {
+        const userLogged = {
+          id: String(result.user.id),
+          email: result.user.email!,
+          name: result.user.name!,
+          photo: result.user.photoUrl!,
+        } as User;
+        setUser(userLogged);
+        await AsyncStorage.setItem(
+          "@gofinances:user",
+          JSON.stringify(userLogged)
         );
-        const userInfo = await response.json();
-
-        setUser({
-          id: userInfo.id,
-          email: userInfo.email,
-          name: userInfo.given_name,
-          photo: userInfo.picture,
-        });
       }
     } catch (error: any) {
       throw new Error(error);
